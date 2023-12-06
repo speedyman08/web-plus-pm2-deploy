@@ -139,6 +139,6 @@ class Api {
   }
   }
   // Замените на адрес вашего бэкенда
-  const api = new Api("http://stepanseliuk.nomoredomainsmonster.ru/api");
+  const api = new Api("https://stepanseliuk.nomoredomainsmonster.ru/api");
 
   export default api;
