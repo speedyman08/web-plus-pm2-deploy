@@ -20,7 +20,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.get("/crash-test", (req, res, next) => {
   setTimeout(() => {
-    next(new Error("Сервер сейчас упадёт"));
+    try {
+      // Simulate an error
+      throw new Error("Сервер сейчас упадёт");
+    } catch (error) {
+      // Pass the error to the next function
+      next(error);
+    }
   }, 0);
 });
 app.use(routes);
