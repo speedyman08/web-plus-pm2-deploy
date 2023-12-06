@@ -18,9 +18,9 @@ mongoose.connect(DB_ADDRESS);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.get("/crash-test", () => {
+app.get("/crash-test", (req, res, next) => {
   setTimeout(() => {
-    throw new Error("Сервер сейчас упадёт");
+    next(new Error("Сервер сейчас упадёт"));
   }, 0);
 });
 app.use(routes);
