@@ -19,6 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.get("/crash-test", (req, res, next) => {
+  res.send({message: "Crashing server!"})
   setTimeout(() => {
     try {
       // Simulate an error
