@@ -24,7 +24,7 @@ function App() {
   const [selectedCard, setSelectedCard] = React.useState(null);
   const [cards, setCards] = React.useState([]);
 
-  
+
   const [currentUser, setCurrentUser] = React.useState({});
 
   const [isInfoToolTipOpen, setIsInfoToolTipOpen] = React.useState(false);
@@ -37,31 +37,38 @@ function App() {
 
 
   React.useEffect(() => {
-    const token = localStorage.getItem("jwt");
-    if (token) {
-      api
-        .checkToken(token)
-        .then((res) => {
-          console.log(res)
-          api.setToken(token);
-          setEmail(res.email);
-          setIsLoggedIn(true);
-          return api.getAppInfo()
-        })
-        .then(([cardData, userData]) => {
+    // Check if the user is logged in
+    if (isLoggedIn) {
+      // If logged in, get the token from local storage and fetch the data
+      const token = localStorage.getItem("jwt");
+      if (token) {
+        api
+          .checkToken(token)
+          .then((res) => {
+            console.log(res);
+            api.setToken(token);
+            setEmail(res.email);
+            setIsLoggedIn(true);
+            // Fetch application data after confirming the user is logged in
+            return api.getAppInfo();
+          })
+          .then(([cardData, userData]) => {
             setCurrentUser(userData);
             setCards(cardData);
+            // Navigate to the main page
             history.push("/");
-        })
-        .catch((err) => {
-          localStorage.removeItem("jwt");
-          console.log(err);
-        });
+          })
+          .catch((err) => {
+            // Handle error (e.g., by showing a message to the user)
+            localStorage.removeItem("jwt");
+            console.log(err);
+          });
+      }
     }
-  }, [history]);
+  }, [history, isLoggedIn]);
 
 
-  
+
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
   }
@@ -155,6 +162,7 @@ function App() {
     api
       .login(email, password)
       .then((res) => {
+        localStorage.setItem("jwt", res.token);
         setIsLoggedIn(true);
         setEmail(email);
         history.push("/");
@@ -166,15 +174,15 @@ function App() {
   }
 
   function onSignOut() {
-    
+
     localStorage.removeItem("jwt");
     setIsLoggedIn(false);
-    
+
     history.push("/signin");
   }
 
   return (
-    
+
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page__content">
         <Header email={email} onSignOut={onSignOut} />
